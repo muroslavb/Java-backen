@@ -1,0 +1,29 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mod_catalog
+    username: user
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: validate # Важливо: відключаємо генерацію таблиць Hibernate
+    show-sql: true
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: spring-client
+            client-secret: 0GZmVn57hZoF3YCiKeOPc7WJKBEzNdqfWKlMaEsKBwO6Xpl16jbPoo5o2wivbHQCs4MzcMqDx5H90dnQzGnYgh
+            scope: openid, profile, email
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/mod-realm
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/mod-realm

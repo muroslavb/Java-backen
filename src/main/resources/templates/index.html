@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mod Catalog</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .form-group { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+<h1>Каталог ігрових модифікацій</h1>
+<p>Ви авторизувалися через Keycloak! <a href="/logout">Вийти</a></p>
+
+<hr>
+
+<h3>Додати новий мод (Create)</h3>
+<form th:action="@{/ui/mods}" th:object="${newMod}" method="post">
+    <div class="form-group">
+        <input type="text" th:field="*{name}" placeholder="Назва модифікації" required>
+    </div>
+    <div class="form-group">
+        <input type="text" th:field="*{description}" placeholder="Опис">
+    </div>
+    <div class="form-group">
+        <input type="text" th:field="*{version}" placeholder="Версія (напр. 1.0)">
+    </div>
+    <button type="submit">Зберегти</button>
+</form>
+
+<hr>
+
+<h3>Список модів (Read & Delete)</h3>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Назва</th>
+        <th>Опис</th>
+        <th>Версія</th>
+        <th>Дії</th>
+    </tr>
+    <tr th:each="item : ${mods}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.description}"></td>
+        <td th:text="${item.version}"></td>
+        <td>
+            <form th:if="${item.id != null}" th:action="@{/ui/mods/delete/{id}(id=${item.id})}" method="post">
+                <button type="submit" style="color: red;">Видалити</button>
+            </form>
+            <span th:if="${item.id == null}" style="color: orange;">DTO порожній (ID = null)</span>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
