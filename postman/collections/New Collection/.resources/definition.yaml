@@ -1,0 +1,13 @@
+$kind: collection
+auth:
+  - id: 027d249f-e7c9-47e9-928f-348efa48c91e
+    type: oauth2
+    name: OAuth 2.0
+    credentials:
+      addTokenTo: header
+      grant_type: password_credentials
+      accessTokenUrl: http://localhost:8080/realms/mod-realm/protocol/openid-connect/token
+      clientId: mod-client
+      clientSecret: 0ERAKvKAbeMf3roVNChyiJVFE5YbFb4emS4TRX4P67gnTDkFQKLllFrsLA8hc6kNpSU88dvGJIBHsWQ4EjU6aP
+      username: author1
+      password: "1234"

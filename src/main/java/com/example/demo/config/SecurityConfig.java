@@ -7,9 +7,15 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -46,16 +52,25 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Конвертер для витягування ролей з Keycloak JWT токена
+    // Конвертер для витягування ролей з Keycloak JWT токена (з realm_access.roles)
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        // Встановлюємо порожній префікс, оскільки ролі в Keycloak вже мають префікс ROLE_
-        grantedAuthoritiesConverter.setAuthorityPrefix("");
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            Collection<GrantedAuthority> authorities = new ArrayList<>();
+            // Keycloak зберігає ролі в realm_access.roles, а не у верхньорівневому полі roles
+            Map<String, Object> realmAccess = jwt.getClaimAsMap("realm_access");
+            if (realmAccess != null) {
+                Object roles = realmAccess.get("roles");
+                if (roles instanceof List<?> roleList) {
+                    roleList.forEach(role ->
+                        // Додаємо префікс ROLE_, щоб hasRole('AUTHOR') перевіряло ROLE_AUTHOR
+                        authorities.add(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
+                }
+            }
+            return authorities;
+        });
         return jwtAuthenticationConverter;
     }
 }
