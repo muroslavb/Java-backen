@@ -1,4 +1,26 @@
 $kind: http-request
-url: ""
 method: GET
+url: 'http://localhost:8081/api/mods/:id/report'
 order: 1000
+pathVariables:
+  - key: id
+    value: '1'
+auth:
+  type: oauth2
+  credentials:
+    - key: grant_type
+      value: password_credentials
+    - key: accessTokenUrl
+      value: 'http://localhost:8080/realms/mod-realm/protocol/openid-connect/token'
+    - key: clientId
+      value: mod-client
+    - key: clientSecret
+      value: 'my-secret-key'
+    - key: username
+      value: testuser
+    - key: password
+      value: password
+    - key: scope
+      value: 'openid profile email'
+    - key: addTokenTo
+      value: header

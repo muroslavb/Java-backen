@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.async.NotificationAsyncService;
 import com.example.demo.dto.ModificationDto;
 import com.example.demo.entity.Modification;
 import com.example.demo.mapper.ModificationMapper;
@@ -10,6 +11,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.task.TaskRejectedException;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,9 @@ class ModificationServiceTest {
 
     @Mock
     private ModificationMapper mapper;
+
+    @Mock
+    private NotificationAsyncService notificationService;
 
     @InjectMocks
     private ModificationService modificationService;
@@ -139,5 +144,41 @@ class ModificationServiceTest {
 
         // Assert (AC 7: перевіряємо факт виклику побічного ефекту)
         verify(repository, times(1)).deleteById(id);
+    }
+
+    @Test
+    void createMod_validDto_triggersAsyncNotification() {
+        ModificationDto inputDto = new ModificationDto();
+        Modification entity = new Modification();
+        Modification saved = new Modification();
+        ModificationDto outputDto = new ModificationDto();
+        outputDto.setId(1L);
+
+        when(mapper.toEntity(inputDto)).thenReturn(entity);
+        when(repository.save(entity)).thenReturn(saved);
+        when(mapper.toDto(saved)).thenReturn(outputDto);
+
+        modificationService.createMod(inputDto);
+
+        verify(notificationService, times(1)).sendModCreatedEmail(outputDto);
+    }
+
+    @Test
+    void createMod_executorRejectsNotification_modIsStillCreated() {
+        ModificationDto inputDto = new ModificationDto();
+        Modification entity = new Modification();
+        Modification saved = new Modification();
+        ModificationDto outputDto = new ModificationDto();
+        outputDto.setId(1L);
+
+        when(mapper.toEntity(inputDto)).thenReturn(entity);
+        when(repository.save(entity)).thenReturn(saved);
+        when(mapper.toDto(saved)).thenReturn(outputDto);
+        doThrow(new TaskRejectedException("executor is full")).when(notificationService).sendModCreatedEmail(outputDto);
+
+        ModificationDto result = modificationService.createMod(inputDto);
+
+        assertEquals(1L, result.getId());
+        verify(repository).save(entity);
     }
 }

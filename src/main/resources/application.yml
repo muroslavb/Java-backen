@@ -17,7 +17,7 @@ spring:
         registration:
           keycloak:
             client-id: mod-client
-            client-secret: 0ERAKvKAbeMf3roVNChyiJVFE5YbFb4emS4TRX4P67gnTDkFQKLllFrsLA8hc6kNpSU88dvGJIBHsWQ4EjU6aP
+            client-secret: my-secret-key
             scope: openid, profile, email
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
@@ -27,3 +27,9 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:8080/realms/mod-realm
+app:
+  async:
+    email-delay-ms: 1000
+    pdf-delay-ms: 1000
+    rating-delay-ms: 1000
+    report-timeout-ms: 5000
