@@ -28,6 +28,11 @@ public class ModificationController {
         return service.getModById(id);
     }
 
+    @GetMapping("/{id}/export")
+    public ModificationDto export(@PathVariable Long id) {
+        return service.getModForExport(id);
+    }
+
     @CreateApiEndpoint
     @PreAuthorize("hasRole('AUTHOR')")
     public ModificationDto create(

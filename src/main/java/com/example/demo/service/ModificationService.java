@@ -1,5 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.annotation.MaskAuthor;
+import com.example.demo.annotation.RateLimited;
+import com.example.demo.annotation.RetryOnFailure;
 import com.example.demo.dto.ModificationDto;
 import com.example.demo.entity.Modification;
 import com.example.demo.mapper.ModificationMapper;
@@ -17,22 +20,31 @@ public class ModificationService {
     private final ModificationRepository repository;
     private final ModificationMapper mapper;
 
+    @MaskAuthor
+    @RetryOnFailure
     public List<ModificationDto> getAllMods() {
         return repository.findAll().stream()
                 .map(mapper::toDto)
                 .toList();
     }
 
+    @MaskAuthor
+    @RetryOnFailure
     public ModificationDto getModById(Long id) {
         return repository.findById(id)
                 .map(mapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Mod not found"));
     }
 
+    @RateLimited(maxCalls = 5, windowSeconds = 60)
     @Transactional
     public ModificationDto createMod(ModificationDto dto) {
         Modification mod = mapper.toEntity(dto);
         return mapper.toDto(repository.save(mod));
+    }
+
+    public ModificationDto getModForExport(Long id) {
+        return this.getModById(id);
     }
 
     @Transactional
