@@ -37,6 +37,7 @@ public class ModificationService {
 
     @Transactional
     public void deleteMod(Long id) {
-        repository.deleteById(id);
+
+        //repository.deleteById(id);
     }
 }

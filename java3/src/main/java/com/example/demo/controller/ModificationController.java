@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
+import com.example.demo.annotation.CreateApiEndpoint;
+import com.example.demo.annotation.CurrentAuthor;
 import com.example.demo.dto.ModificationDto;
 import com.example.demo.service.ModificationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +28,13 @@ public class ModificationController {
         return service.getModById(id);
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('AUTHOR')") // Метод заблокується, якщо у юзера немає цієї ролі
-    public ModificationDto create(@RequestBody ModificationDto dto) {
+    @CreateApiEndpoint
+    @PreAuthorize("hasRole('AUTHOR')")
+    public ModificationDto create(
+            @RequestBody @Valid ModificationDto dto,
+            @CurrentAuthor String author) {
+
+        dto.setAuthorUsername(author);
         return service.createMod(dto);
     }
 
