@@ -1,0 +1,70 @@
+{
+  "realm": "mod-realm",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "accessTokenLifespan": 1800,
+  "roles": {
+    "realm": [
+      { "name": "user", "description": "Звичайний користувач" },
+      { "name": "AUTHOR", "description": "Автор модів" },
+      { "name": "ADMIN", "description": "Адміністратор" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "mod-client",
+      "name": "mod-client",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "0ERAKvKAbeMf3roVNChyiJVFE5YbFb4emS4TRX4P67gnTDkFQKLllFrsLA8hc6kNpSU88dvGJIBHsWQ4EjU6aP",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "rootUrl": "http://localhost:8081",
+      "baseUrl": "/",
+      "redirectUris": ["http://localhost:8081/*"],
+      "webOrigins": ["+"],
+      "fullScopeAllowed": true,
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "author1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Author",
+      "lastName": "One",
+      "email": "author1@example.com",
+      "credentials": [{ "type": "password", "value": "1234", "temporary": false }],
+      "realmRoles": ["user", "AUTHOR"]
+    },
+    {
+      "username": "admin1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "One",
+      "email": "admin1@example.com",
+      "credentials": [{ "type": "password", "value": "1234", "temporary": false }],
+      "realmRoles": ["user", "AUTHOR", "ADMIN"]
+    },
+    {
+      "username": "testuser",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "User",
+      "email": "test@example.com",
+      "credentials": [{ "type": "password", "value": "1234", "temporary": false }],
+      "realmRoles": ["user"]
+    }
+  ]
+}
