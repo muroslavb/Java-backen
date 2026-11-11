@@ -2,7 +2,7 @@ server:
   port: 8081
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/mod_catalog
+    url: jdbc:postgresql://127.0.0.1:55432/mod_catalog
     username: user
     password: password
   jpa:
@@ -11,6 +11,18 @@ spring:
     show-sql: true
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
+  quartz:
+    job-store-type: jdbc
+    overwrite-existing-jobs: true
+    jdbc:
+      initialize-schema: never
+    properties:
+      org.quartz.scheduler.instanceName: mod-catalog-scheduler
+      org.quartz.scheduler.instanceId: AUTO
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+      org.quartz.jobStore.tablePrefix: QRTZ_
+      org.quartz.jobStore.isClustered: false
+      org.quartz.threadPool.threadCount: 3
   security:
     oauth2:
       client:
@@ -23,7 +35,18 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
         provider:
           keycloak:
-            issuer-uri: http://localhost:8080/realms/mod-realm
+            issuer-uri: http://localhost:18080/realms/mod-realm
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/mod-realm
+          issuer-uri: http://localhost:18080/realms/mod-realm
+app:
+  async:
+    email-delay-ms: 1000
+    pdf-delay-ms: 1000
+    rating-delay-ms: 1000
+    report-timeout-ms: 5000
+  scheduler:
+    time-zone: Europe/Kyiv
+    report-daily-cron: "0/30 * * * * ?"
+    report-weekly-cron: "0 0 3 ? * MON"
+    cleanup-cron: "0 30 3 * * ?"

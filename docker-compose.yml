@@ -1,19 +1,29 @@
-version: '3.8'
+name: mod-catalog
+
 services:
   postgres:
     image: postgres:15
+    container_name: mod-catalog-postgres
     environment:
       POSTGRES_DB: mod_catalog
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
-      - "5432:5432"
+      - "55432:5432"
+    volumes:
+      - mod-catalog-pg:/var/lib/postgresql/data
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
-    command: start-dev
+    container_name: mod-catalog-keycloak
+    command: start-dev --import-realm
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - "8080:8080"
+      - "18080:8080"
+    volumes:
+      - ./keycloak/mod-realm-realm.json:/opt/keycloak/data/import/mod-realm-realm.json:ro
+
+volumes:
+  mod-catalog-pg:

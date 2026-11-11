@@ -6,7 +6,7 @@ auth:
     credentials:
       addTokenTo: header
       grant_type: password_credentials
-      accessTokenUrl: http://localhost:8080/realms/mod-realm/protocol/openid-connect/token
+      accessTokenUrl: http://localhost:18080/realms/mod-realm/protocol/openid-connect/token
       clientId: mod-client
       clientSecret: 0ERAKvKAbeMf3roVNChyiJVFE5YbFb4emS4TRX4P67gnTDkFQKLllFrsLA8hc6kNpSU88dvGJIBHsWQ4EjU6aP
       username: author1
